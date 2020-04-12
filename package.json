@@ -1,5 +1,5 @@
 {
-  "name": "Cinemaddict",
+  "name": "cinemaddict",
   "version": "1.0.0",
   "private": true,
   "description": "Личный проект «Киноман» от HTML Academy",
@@ -12,6 +12,8 @@
   "devDependencies": {
     "eslint": "6.1.0",
     "eslint-config-htmlacademy": "0.5.2",
+    "jsdom": "16.2.2",
+    "jsdom-quokka-plugin": "1.0.15",
     "webpack": "4.42.1",
     "webpack-cli": "3.3.11",
     "webpack-dev-server": "3.10.3"
