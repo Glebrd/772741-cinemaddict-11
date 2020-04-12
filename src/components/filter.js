@@ -6,4 +6,4 @@ export const filter = () => {
 <a href="#favorites" class="main-navigation__item">Favorites <span class="main-navigation__item-count">8</span></a>
 `
   );
-}
+};
