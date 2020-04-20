@@ -1,92 +1,135 @@
-import {board} from './components/board';
-import {filmCard} from './components/film-card';
-import {filmDetails} from './components/film-details';
-import {filmSection} from './components/film-section';
-import {filter} from './components/filter';
-import {navMenu} from './components/nav-menu';
-import {profile} from './components/profile';
-import {showMore} from './components/show-more';
-import {sorting} from './components/sorting';
-import {statistic} from './components/statistic';
+import Board from './components/board';
+import FilmCard from './components/film-card';
+import FilmDetails from './components/film-details';
+import FilmSection from './components/film-section';
+import Filter from './components/filter';
+import NavMenu from './components/nav-menu';
+import Profile from './components/profile';
+import ShowMore from './components/show-more';
+import Sorting from './components/sorting';
+import Statistic from './components/statistic';
 // import {generateFilm} from './mock/film';
 import {generateFilms} from './mock/film';
+import {render, RenderPosition} from "./utils";
 
 const MAIN_FILMS_COUNT = 22;
-
 const MAIN_FILMS_COUNT_ON_START = 5;
-
 const TOP_RATED_FILMS_COUNT = 2;
-
 const MOST_COMMENTED_FILMS_COUNT = 2;
-
 const SHOWING_TASKS_COUNT_BY_BUTTON = 5;
 
-// Функция рендера элементов
-const render = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
+// ///////* Функция рендера фильма (и навески обработчиков) *///////////////
+const renderFilm = (filmsListTemplate, film) => {
+  const filmCard = new FilmCard(film);
+  const filmDetails = new FilmDetails(film);
+  // ///////* Функция открытия попапа *///////////////
+  const onPopupClick = () => {
+    render(document.body, filmDetails.getElement(), RenderPosition.BEFOREEND);
+    filmDetails.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`,
+      () => {
+      filmDetails.getElement().remove();
+      filmDetails.removeElement();
+      });
+  };
+  const poster = filmCard.getElement().querySelector(`.film-card__poster`);
+  poster.addEventListener(`click`, onPopupClick)
+  render(filmsListTemplate, filmCard.getElement(), RenderPosition.BEFOREEND);
 };
 
-// Создаем массив фильмов
-const films = generateFilms(MAIN_FILMS_COUNT);
+// ///////* Функция рендера доски (и навески обработчиков) *///////////////
+let showingFilmsCount = MAIN_FILMS_COUNT_ON_START;
+const renderBoard = (boardComponent, films) => {
+  const filmSection = new FilmSection(false, `All movies. Upcoming`);
+  const filmSectionTopRated = new FilmSection(true, `Top rated movies`);
+  const filmsSectionMostCommented = new FilmSection(true, `Most commented`);
+  render(board.getElement(), filmSection.getELement(), RenderPosition.BEFOREEND);
+  render(board.getElement(), filmSectionTopRated.getELement(), RenderPosition.BEFOREEND);
+  render(board.getElement(), filmsSectionMostCommented.getELement(), RenderPosition.BEFOREEND)
+  films.slice(0, showingFilmsCount)
+    .forEach((film) => {
+      renderFilm(filmSection.getELement().querySelector(`.films-list__container`), film);
+    });
 
-// Идентификаторы элементов (чтоб понять, куда ренедерить)
+  films.slice(0, TOP_RATED_FILMS_COUNT)
+    .forEach((film) => {
+      renderFilm(filmSectionTopRated.getELement().querySelector(`.films-list__container`), film);
+    });
+
+  films.slice(0, MOST_COMMENTED_FILMS_COUNT)
+    .forEach((film) => {
+      renderFilm(filmsSectionMostCommented.getELement().querySelector(`.films-list__container`), film);
+    });
+
+  // Кнопка
+  const showMoreButton = new ShowMore;
+  render(filmSection.getELement(), showMoreButton.getElement(), RenderPosition.BEFOREEND);
+  showMoreButton.getElement().addEventListener(`click`, () => {
+    const prevTasksCount = showingFilmsCount;
+    showingFilmsCount = showingFilmsCount + SHOWING_TASKS_COUNT_BY_BUTTON;
+    films.slice(prevTasksCount, showingFilmsCount)
+      .forEach((film) => renderFilm(filmSection.getELement().querySelector(`.films-list__container`), film));
+
+    if (showingFilmsCount >= films.length) {
+      showMoreButton.getElement().remove();
+      showMoreButton.removeElement();
+    }
+  });
+}
+// ///////////////////////////////////////////
+
+// Идентификаторы элементов сайта (чтоб понять, куда ренедерить)
 const siteHeader = document.querySelector(`.header`);
 const siteMainElement = document.querySelector(`.main`);
 const footerStatisticsContainer = document.querySelector(`.footer__statistics`);
 
 // Рендерим!
-render(siteHeader, profile(), `beforeend`);
-render(siteMainElement, navMenu(), `beforeend`);
-render(siteMainElement, sorting(), `beforeend`);
-const navMenuTemplate = document.querySelector(`.main-navigation`);
-render(navMenuTemplate, filter(), `afterbegin`);
-render(siteMainElement, board(), `beforeend`);
-const filmsTemplate = document.querySelector(`.films`);
-render(filmsTemplate, filmSection(), `beforeend`);
-render(filmsTemplate, filmSection(true), `beforeend`);
-render(filmsTemplate, filmSection(true), `beforeend`);
-const filmsListTemplate = document.querySelector(`.films-list__container`);
-render(filmsListTemplate, showMore(), `afterend`);
-const filmsListTopRatedTemplate = document.querySelector(`.films-list--extra .films-list__container`);
-const filmsListMostCommentedTemplate = document.querySelector(`.films-list--extra + .films-list--extra .films-list__container`);
+// Профиль
+const profileComponent = new Profile();
+render(siteHeader, profileComponent.getElement(), RenderPosition.BEFOREEND);
+// НавМеню
+const navMenuComponent = new NavMenu();
+render(siteMainElement, navMenuComponent.getElement(), RenderPosition.BEFOREEND);
+// Фильтры
+const filter = new Filter();
+render(navMenuComponent.getElement(), filter.getElement(), RenderPosition.AFTERBEGIN);
+// Сортфировка
+const sorting = new Sorting();
+render(siteMainElement, sorting.getElement(), RenderPosition.BEFOREEND);
+// Доска
+const board = new Board();
+render(siteMainElement, board.getElement(), RenderPosition.BEFOREEND)
 
-let showingFilmsCount = MAIN_FILMS_COUNT_ON_START;
+// Создаем массив фильмов
+const films = generateFilms(MAIN_FILMS_COUNT);
 
-films.slice(0, showingFilmsCount)
-  .forEach((film)=> render(filmsListTemplate, filmCard(film), `beforeend`));
+// рендерим достку
+renderBoard(board, films);
 
-films.slice(0, TOP_RATED_FILMS_COUNT)
-  .forEach((film)=> render(filmsListTopRatedTemplate, filmCard(film), `beforeend`));
-
-films.slice(0, MOST_COMMENTED_FILMS_COUNT)
-  .forEach((film)=> render(filmsListMostCommentedTemplate, filmCard(film), `beforeend`));
-
-// for (let i = 0; i < MAIN_FILMS_COUNT; i++) {
-//   render(filmsListTemplate, filmCard(), `beforeend`);
-// }
-
-// for (let i = 0; i < TOP_RATED_FILMS_COUNT; i++) {
-//   render(filmsListTopRatedTemplate , filmCard(), `beforeend`);
-// }
+// Статистика
+const statistic = new Statistic();
+render(footerStatisticsContainer, statistic.getElement(), RenderPosition.BEFOREEND)
+// const navMenuTemplate = document.querySelector(`.main-navigation`);
+// render(navMenuTemplate, filter(), RenderPosition.AFTERBEGIN);
+// render(siteMainElement, board(), RenderPosition.BEFOREEND);
+// const filmsListTemplate = document.querySelector(`.films-list__container`);
+// // render(filmsListTemplate, showMore(), `afterend`);
+// const filmsListTopRatedTemplate = document.querySelector(`.films-list--extra .films-list__container`);
+// const filmsListMostCommentedTemplate = document.querySelector(`.films-list--extra + .films-list--extra .films-list__container`);
 //
-// for (let i = 0; i < MOST_COMMENTED_FILMS_COUNT; i++) {
-//   render(filmsListMostCommentedTemplate, filmCard(), `beforeend`);
-// }
-
-render(footerStatisticsContainer, statistic(), `beforeend`);
-
-const loadMoreButton = siteMainElement.querySelector(`.films-list__show-more`);
-
-render(siteMainElement, filmDetails(), `beforeend`);
-
-loadMoreButton.addEventListener(`click`, () => {
-  const prevTasksCount = showingFilmsCount;
-  showingFilmsCount = showingFilmsCount + SHOWING_TASKS_COUNT_BY_BUTTON;
-
-  films.slice(prevTasksCount, showingFilmsCount)
-    .forEach((film) => render(filmsListTemplate, filmCard(film), `beforeend`));
-
-  if (showingFilmsCount >= films.length) {
-    loadMoreButton.remove();
-  }
-});
+// // Рендер карточке
+//
+//
+// films.slice(0, showingFilmsCount)
+//   .forEach((film) => renderFilm(filmsListTemplate, film));
+//
+// films.slice(0, TOP_RATED_FILMS_COUNT)
+//   .forEach((film) => renderFilm(filmsListTopRatedTemplate, film));
+//
+// films.slice(0, MOST_COMMENTED_FILMS_COUNT)
+//   .forEach((film) => renderFilm(filmsListMostCommentedTemplate, film));
+//
+// render(footerStatisticsContainer, statistic(), RenderPosition.BEFOREEND);
+//
+// const loadMoreButton = siteMainElement.querySelector(`.films-list__show-more`);
+//
+// render(siteMainElement, filmDetails(), RenderPosition.BEFOREEND);
