@@ -18,7 +18,7 @@ const TOP_RATED_FILMS_COUNT = 2;
 const MOST_COMMENTED_FILMS_COUNT = 2;
 const SHOWING_TASKS_COUNT_BY_BUTTON = 5;
 
-// ///////* Функция рендера фильма (и навески обработчиков) *///////////////
+// ///////* Функция рендера фильма (и навески обработчиков) *////////////////
 const renderFilm = (filmsListTemplate, film) => {
   const filmCard = new FilmCard(film);
   const filmDetails = new FilmDetails(film);
