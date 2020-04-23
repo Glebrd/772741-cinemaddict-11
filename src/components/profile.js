@@ -1,9 +1,6 @@
-import {createElement} from "../utils";
+import AbstractComponent from "./abstratct-component";
 
-export default class Profile {
-  constructor() {
-    this._element = null;
-  }
+export default class Profile extends AbstractComponent {
   getTemplate() {
     return (`
 <section class="header__profile profile">
@@ -11,14 +8,5 @@ export default class Profile {
   <img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
 </section>
 `).trim();
-  }
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-  removerElement() {
-    this._element = null;
   }
 }

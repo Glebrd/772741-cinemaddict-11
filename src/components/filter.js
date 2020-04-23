@@ -1,9 +1,6 @@
-import {createElement} from "../utils";
+import AbstractComponent from "./abstratct-component";
 
-export default class Filter {
-  constructor() {
-    this._element = null;
-  }
+export default class Filter extends AbstractComponent{
   getTemplate() {
     return `
 <div class="main-navigation__items">
@@ -13,15 +10,6 @@ export default class Filter {
 <a href="#favorites" class="main-navigation__item">Favorites <span class="main-navigation__item-count">8</span></a>
 </div>
 `.trim();
-  }
-  getElement(){
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-  removeElement(){
-    this._element = null;
   }
 }
 
