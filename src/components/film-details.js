@@ -1,8 +1,9 @@
-import {createElement} from "../utils";
+import AbstractComponent from "./abstratct-component";
+import {render, RenderPosition} from "../utils";
 
-export default class FilmDetails {
+export default class FilmDetails extends AbstractComponent {
   constructor({title}) {
-    this._element = null;
+    super();
     this._title = title;
   }
   getTemplate () {
@@ -177,13 +178,17 @@ export default class FilmDetails {
   </form>
   </section>`.trim();
   }
-getElement () {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-}
-removeElement () {
-    this._element = null;
-}
+  setPopupClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, handler);
+  }
+
+
+  // const onPopupClick = () => {
+  //   render(document.body, filmDetails.getElement(), RenderPosition.BEFOREEND);
+  //   filmDetails.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`,
+  //     () => {
+  //       filmDetails.getElement().remove();
+  //       filmDetails.removeElement();
+  //     });
+  // };
 }
