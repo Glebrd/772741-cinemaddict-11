@@ -1,8 +1,8 @@
 const generateFilm = () => {
   return {
     title: getRandomArrayItem(MovieNames),
-    rating: 7,
-    releaseDate: 124,
+    rating: getRandomIntegerNumber(1, 100),
+    releaseDate: getRandomIntegerNumber(1, 100),
     duration: 321,
     genre: `randomGenre`,
     picture: getRandomArrayItem(Posters),
