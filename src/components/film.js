@@ -1,6 +1,6 @@
 import AbstractComponent from "./abstratct-component";
 
-export default class FilmCard extends AbstractComponent {
+export default class Film extends AbstractComponent {
   constructor({title, rating, releaseDate, duration, genre, picture, description}) {
     super();
     this._title = title;
@@ -30,5 +30,8 @@ export default class FilmCard extends AbstractComponent {
         </article>`.trim()
     );
   };
+  setOpenPopupClickHandler(handler) {
+    this.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, handler);
+  }
 }
 

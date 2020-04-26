@@ -1,5 +1,4 @@
 import AbstractComponent from "./abstratct-component";
-import {render, RenderPosition} from "../utils";
 
 export default class FilmDetails extends AbstractComponent {
   constructor({title}) {
@@ -178,11 +177,9 @@ export default class FilmDetails extends AbstractComponent {
   </form>
   </section>`.trim();
   }
-  setPopupClickHandler(handler) {
+  setPopupCloseBtnClickHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, handler);
   }
-
-
   // const onPopupClick = () => {
   //   render(document.body, filmDetails.getElement(), RenderPosition.BEFOREEND);
   //   filmDetails.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`,
