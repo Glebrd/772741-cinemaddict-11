@@ -1,4 +1,4 @@
-// module6-task2
+// module7-task1
 
 import SortComponent, {SortType} from "../components/sort";
 import LoadMoreButtonComponent from "../components/load-more";
