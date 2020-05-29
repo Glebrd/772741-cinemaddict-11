@@ -1,7 +1,7 @@
 import AbstractComponent from "./abstratct-component";
 
 export default class Film extends AbstractComponent {
-  constructor({title, rating, releaseDate, duration, genre, picture, description}) {
+  constructor({title, rating, releaseDate, duration, genre, picture, description, inWatchlist, isWatched, isFavorite}) {
     super();
     this._title = title;
     this._rating = rating;
@@ -10,9 +10,21 @@ export default class Film extends AbstractComponent {
     this._genre = genre;
     this._picture = picture;
     this._description = description;
+    this._inWatchlist = inWatchlist;
+    this._isWatched = isWatched;
+    this._isFavorite = isFavorite;
   }
+  createButtonMarkup(cssClassName, name, isActive = true) {
+    return (
+      `<button class="film-card__controls-item button film-card__controls-item--${cssClassName}${isActive ? `` : `film-card__controls-item--active`}">${name}</button>`.trim()
+    );
+  };
   getTemplate() {
-    return (`<article class="film-card">
+    const watchlistButton = this.createButtonMarkup(`add-to-watchlist`,`Add to watchlis`, this._inWatchlist);
+    const watchedButton = this.createButtonMarkup(`mark-as-watched`,`Mark as watched`, this._isWatched);
+    const favoriteButton = this.createButtonMarkup(`favorite`,`Mark as favorite`, this._isFavorite);
+    return (
+      `<article class="film-card">
           <h3 class="film-card__title">${this._title}</h3>
           <p class="film-card__rating">${this._rating}</p>
           <p class="film-card__info">
@@ -23,15 +35,23 @@ export default class Film extends AbstractComponent {
           <p class="film-card__description">${this._description}</p>
           <a class="film-card__comments">5 comments</a>
           <form class="film-card__controls">
-            <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist">Add to watchlist</button>
-            <button class="film-card__controls-item button film-card__controls-item--mark-as-watched">Mark as watched</button>
-            <button class="film-card__controls-item button film-card__controls-item--favorite">Mark as favorite</button>
+              ${watchlistButton}
+              ${watchedButton}
+              ${favoriteButton}
           </form>
         </article>`.trim()
     );
-  };
+}
   setOpenPopupClickHandler(handler) {
     this.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, handler);
   }
+  setWatchlistButtonClickHandler(handler) {
+    this.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, handler);
+  }
+  setWatchedButtonClickHandler(handler) {
+    this.getElement().querySelector(`.film-card__controls-item--mark-as-watched`).addEventListener(`click`, handler);
+  }
+  setFavoriteButtonClickHandler(handler) {
+    this.getElement().querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, handler);
+  }
 }
-
