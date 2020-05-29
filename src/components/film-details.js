@@ -1,8 +1,18 @@
 import AbstractComponent from "./abstratct-component";
+import AbstractSmartComponent from "./abstract-smart-component";
 
-export default class FilmDetails extends AbstractComponent {
+export default class FilmDetails extends AbstractSmartComponent {
   constructor({title}) {
     super();
+    // Получается, что мы создаём один инстанс попапа и чтоб не создавать каждый раз новый инстанс,
+    // он сам перевешивает на себя обработчики? Сохранив их в свойствах конструктора.
+
+    // this._addWatchListHandler = null;
+    // this._markAsWatchedHandler = null;
+    // this._favoriteHandler = null;
+    // this._closeButtonHandler = null;
+
+    // this._subscribeOnEvents();
     this._title = title;
   }
   getTemplate () {
@@ -177,15 +187,37 @@ export default class FilmDetails extends AbstractComponent {
   </form>
   </section>`.trim();
   }
+ recoveryListeners() {
+   // this.setWatchlistButtonClickHandler(this._addWatchListHandler);
+   // this.setWatchedButtonClickHandler(this._markAsWatchedHandler);
+   // this.setFavoriteButtonClickHandler(this._favoriteHandler);
+   // this.setPopupCloseBtnClickHandler.(this._closeButtonHandler);
+ }
+  // Перерендериваем и запускаем рекавериевентлистенерс в родительском классе.
+ rerender() {
+    super.rerender();
+  }
+setWatchlistButtonClickHandler(handler) {
+  this.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, handler);
+
+  this._addWatchListHandler = handler;
+}
+setWatchedButtonClickHandler(handler) {
+  this.getElement().querySelector(`.film-card__controls-item--mark-as-watched`).addEventListener(`click`, handler);
+
+  this._markAsWatchedHandler = handler;
+}
+  setFavoriteButtonClickHandler(handler) {
+    this.getElement().querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, handler);
+
+    this._favoriteHandler = handler;
+  }
   setPopupCloseBtnClickHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, handler);
+
+    this._closeButtonHandler = handler;
   }
-  // const onPopupClick = () => {
-  //   render(document.body, filmDetails.getElement(), RenderPosition.BEFOREEND);
-  //   filmDetails.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`,
-  //     () => {
-  //       filmDetails.getElement().remove();
-  //       filmDetails.removeElement();
-  //     });
-  // };
 }
+
+
+
